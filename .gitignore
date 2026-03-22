@@ -1,2 +1,27 @@
-*.exe
+# Loại bỏ thư mục cấu hình của VS Code
+.vscode/
+
+# Loại bỏ tất cả các file có đuôi .json
 *.json
+
+# --- Bổ sung quan trọng cho lập trình C/C++ ---
+# Loại bỏ các file thực thi (để tránh lỗi Invalid argument như trước)
+*.exe
+*.out
+*.app
+
+# Loại bỏ các file object và thư viện tạm
+*.o
+*.obj
+*.a
+*.lib
+
+# Loại bỏ các thư mục build tự động
+build/
+Debug/
+Release/
+
+# Loại bỏ các file log và file tạm của hệ thống
+*.log
+.DS_Store
+Thumbs.db
