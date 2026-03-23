@@ -6,8 +6,6 @@
 
 using namespace std;
 
-// --- 1. CÁC HÀM TIỆN ÍCH (UTILITIES) ---
-
 // Loại bỏ khoảng trắng thừa ở hai đầu chuỗi
 string trim(string s) {
     int l = 0, r = (int)s.length() - 1;
@@ -21,14 +19,27 @@ string trim(string s) {
 bool isNumeric(string s) {
     s = trim(s);
     if (s.empty()) return false;
-    try {
-        size_t pos;
-        stod(s, &pos);
-        // Trả về true nếu toàn bộ chuỗi được chuyển đổi thành công
-        return pos == s.length(); 
-    } catch (...) {
-        return false;
+
+    bool hasDot = false;
+    for (int i = 0; i < s.length(); i++) {
+        // 1. Kiểm tra dấu âm ở đầu chuỗi
+        if (s[i] == '-' && i == 0) continue;
+
+        // 2. Kiểm tra dấu chấm thập phân (chỉ xuất hiện 1 lần)
+        if (s[i] == '.') {
+            if (hasDot) return false; // Đã có dấu chấm trước đó rồi
+            hasDot = true;
+            continue;
+        }
+
+        // 3. Nếu không phải số thì trả về false
+        if (s[i] < '0' || s[i] > '9') return false;
     }
+    
+    // Trường hợp đặc biệt: chuỗi chỉ có mỗi dấu "-" hoặc mỗi dấu "."
+    if (s == "-" || s == ".") return false;
+
+    return true;
 }
 
 // Tách một dòng CSV thành vector các ô dữ liệu

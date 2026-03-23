@@ -3,8 +3,6 @@
 #include <string>
 using namespace std;
 
-// --- CÁC HÀM TIỆN ÍCH ---
-
 string trim(string s) {
     int l = 0, r = s.length() - 1;
     while (l <= r && isspace(s[l])) l++;
@@ -15,7 +13,9 @@ string trim(string s) {
 
 string toLower(string s) {
     for (int i = 0; i < s.length(); i++) {
-        s[i] = tolower(s[i]);
+       if (s[i] >= 'A' && s[i] <= 'Z') {
+            s[i] = s[i] + 32;
+        }
     }
     return s;
 }

@@ -7,12 +7,12 @@
 #include <algorithm>
 using namespace std;
 
-string trim(const string &s) {
-    int start = s.find_first_not_of(" \t\n\r");
-    int end = s.find_last_not_of(" \t\n\r");
-
-    if (start == string::npos) return "";
-    return s.substr(start, end - start + 1);
+string trim(string s) {
+    int l = 0, r = s.length() - 1;
+    while (l <= r && isspace(s[l])) l++;
+    while (r >= l && isspace(s[r])) r--;
+    if (l > r) return "";
+    return s.substr(l, r - l + 1);
 }
 
 bool isMissingToken(string token) {

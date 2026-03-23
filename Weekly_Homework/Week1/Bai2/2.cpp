@@ -14,16 +14,20 @@ string trim(string s) {
     return s.substr(l, r - l + 1);
 }
 
-vector<string> splitCSV(const string& line) {
-    vector<string> result;
+vector<string> splitCSV(const string& line)
+{
+    vector<string> cells;
     stringstream ss(line);
     string cell;
 
     while (getline(ss, cell, ',')) {
-        result.push_back(trim(cell));
+        cells.push_back(trim(cell));
     }
 
-    return result;
+    if (!line.empty() && line.back() == ',')
+        cells.push_back("");
+
+    return cells;
 }
 
 int main() {

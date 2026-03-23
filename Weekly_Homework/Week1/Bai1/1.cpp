@@ -25,7 +25,13 @@ bool readLines(string path, vector<string> & lines){
     while (getline(fIn, line)) {
         lines.push_back(line);
     }
-
+    fIn.clear(); // Reset trạng thái lỗi sau khi lặp xong
+    fIn.seekg(-1, ios_base::end);
+    char lastChar;
+    if (fIn.get(lastChar) && lastChar == '\n') {
+        lines.push_back(""); // Thêm một dòng trống đại diện cho dòng cuối
+    }
+    
     fIn.close();
     return true;
 }
