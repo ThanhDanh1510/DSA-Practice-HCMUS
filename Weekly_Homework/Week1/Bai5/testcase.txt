@@ -1,0 +1,12 @@
+Test case 1: (Dữ liệu chuẩn và Missing)
++ scores.csv:
+SV01, 9.0, 8.5, 7.5
+SV02, 5.0, NA, 6.0
+
+Test case 2: (Trường hợp ID trống)
++ scores.csv:
+, 8.0, 8.0, 8.0
+
+Test case 3: (Trường hợp không có điểm)
++ scores.csv:
+SV01, NA, , nan

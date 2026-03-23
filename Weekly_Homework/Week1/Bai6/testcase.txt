@@ -1,0 +1,9 @@
+Test case 1: (Bình thường)
++ words.txt:
+apple orange apple banana orange
+
+Test case 2: (Phân biệt hoa thường)
++ words.txt:
+C++ c++ C++
+
+Test case 3: (Trống)

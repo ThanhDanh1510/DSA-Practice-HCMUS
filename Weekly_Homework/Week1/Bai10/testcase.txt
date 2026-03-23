@@ -1,0 +1,16 @@
+Test case 1 (Normal testcase):
+2026-03-23 10:00:00 [INFO] System boot
+2026-03-23 10:05:12 [ERROR] Database connection failed
+2026-03-23 10:10:00 [WARN] High traffic
+2026-03-23 10:15:45 [ERROR] Web crashed
+2026-03-23 10:20:00 [INFO] System shutdown
+
+Test case 2 (No error testcase):
+2026-03-23 12:00:00 [INFO] Server started
+2026-03-23 12:05:00 [WARN] High memory usage
+2026-03-23 12:10:00 [INFO] Scheduled backup completed
+
+Test case 3 (1 Error testcase):
+2026-03-23 14:00:00 [INFO] Connection established
+2026-03-23 14:02:15 [ERROR] Timeout occurred
+2026-03-23 14:05:00 [INFO] Retrying...

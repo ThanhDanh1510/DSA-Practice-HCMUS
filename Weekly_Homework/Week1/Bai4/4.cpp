@@ -2,11 +2,17 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <iomanip>
 #include <algorithm>
+
 using namespace std;
 
+struct Stats {
+    int count = 0;
+    double minV = 0, maxV = 0, meanV = 0;
+};
+
+// 1. Module lam sach chuoi
 string trim(string s) {
     int l = 0, r = s.length() - 1;
     while (l <= r && isspace(s[l])) l++;
@@ -15,128 +21,98 @@ string trim(string s) {
     return s.substr(l, r - l + 1);
 }
 
-bool isMissingToken(string token) {
-    token = trim(token);
-
-    if (token.empty()) return true;
-
-    transform(token.begin(), token.end(), token.begin(), ::tolower);
-
-    return (token == "na" || token == "nan");
+// 2. Module kiem tra missing (Quy dinh chung)
+bool isMissing(string s) {
+    s = trim(s);
+    if (s.empty()) return true;
+    for (char &c : s) if (c >= 'A' && c <= 'Z') c += 32; // tolower thu cong
+    return (s == "na" || s == "nan" || s == "n/a");
 }
 
-vector<string> splitCSV(const string& line)
-{
-    vector<string> cells;
-    stringstream ss(line);
-    string cell;
+// 3. Module chuyen doi chuoi thanh double thu cong
+double stringToDouble(string s) {
+    double val = 0.0;
+    int i = 0, n = s.length();
+    double sign = 1.0;
 
-    while (getline(ss, cell, ',')) {
-        cells.push_back(trim(cell));
+    if (s[i] == '-') { sign = -1.0; i++; }
+    else if (s[i] == '+') { i++; }
+
+    // Phan nguyen
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        val = val * 10.0 + (s[i] - '0');
+        i++;
     }
 
-    if (!line.empty() && line.back() == ',')
-        cells.push_back("");
-
-    return cells;
-}
-
-bool readCSV1Col(string path, vector<double>& data, int& missing)
-{
-    ifstream fileInput(path);
-    if (!fileInput.is_open()) {
-        cerr << "Error opening file\n";
-        return false;
-    }
-
-    string line;
-    while (getline(fileInput, line))
-    {
-        vector<string> cells = splitCSV(line);
-        if (!cells.empty())
-        {
-            string token = cells[0];
-
-            if (isMissingToken(token))
-            {
-                missing++;
-            }
-            else
-            {
-                try {
-                    double value = stod(token);
-                    data.push_back(value);
-                }
-                catch (...) {
-                    missing++;
-                }
-            }
+    // Phan thap phan
+    if (i < n && s[i] == '.') {
+        i++;
+        double divisor = 10.0;
+        while (i < n && s[i] >= '0' && s[i] <= '9') {
+            val += (s[i] - '0') / divisor;
+            divisor *= 10.0;
+            i++;
         }
     }
-
-    return true;
+    return val * sign;
 }
 
-struct Stats {
-    int count = 0;
-    int missing = 0;
-    double min = 0;
-    double max = 0;
-    double mean = 0;
-};
-
-Stats computeStats(const vector<double>& data, int missing)
-{
-    Stats stats;
-    stats.count = data.size();
-    stats.missing = missing;
-
-    if (stats.count == 0) return stats;
-
-    long double sum = 0;
-    stats.min = data[0];
-    stats.max = data[0];
-
-    for (double value : data)
-    {
-        sum += value;
-        stats.min = min(stats.min, value);
-        stats.max = max(stats.max, value);
+// 4. Module kiem tra so thuc hop le bang tay
+bool isValidReal(string s) {
+    if (s.empty()) return false;
+    int i = 0, n = s.length(), dotCount = 0, digitCount = 0;
+    if (s[i] == '+' || s[i] == '-') i++;
+    for (; i < n; i++) {
+        if (s[i] == '.') {
+            if (++dotCount > 1) return false;
+        } else if (s[i] >= '0' && s[i] <= '9') {
+            digitCount++;
+        } else return false;
     }
+    return digitCount > 0;
+}
 
-    stats.mean = sum / stats.count;
+// 5. Module xu ly file va thong ke
+void process(string inPath, string outPath) {
+    ifstream fIn(inPath);
+    if (!fIn.is_open()) { cerr << "Loi mo file!" << endl; return; }
 
-    return stats;
+    vector<double> data;
+    int missing = 0;
+    string line;
+
+    while (getline(fIn, line)) {
+        line = trim(line);
+        if (line.empty()) continue;
+        if (isMissing(line)) missing++;
+        else if (isValidReal(line)) data.push_back(stringToDouble(line));
+        else missing++;
+    }
+    fIn.close();
+
+    // Tinh toan thong ke
+    Stats res;
+    res.count = data.size();
+    ofstream fOut(outPath);
+    fOut << fixed << setprecision(2) << "count=" << res.count << "/missing=" << missing << "/";
+
+    if (res.count > 0) {
+        res.minV = res.maxV = data[0];
+        long double sum = 0;
+        for (double v : data) {
+            if (v < res.minV) res.minV = v;
+            if (v > res.maxV) res.maxV = v;
+            sum += v;
+        }
+        res.meanV = (double)(sum / res.count);
+        fOut << "min=" << res.minV << "/max=" << res.maxV << "/mean=" << res.meanV << endl;
+    } else {
+        fOut << "min=N/A/max=N/A/mean=N/A" << endl;
+    }
+    fOut.close();
 }
 
 int main() {
-    vector<double> data;
-    int missing = 0;
-
-    if (!readCSV1Col("data.csv", data, missing))
-        return 1;
-
-    Stats stats = computeStats(data, missing);
-
-    ofstream fileOutput("output.txt");
-    if (!fileOutput.is_open()) {
-        cerr << "Cannot open output file\n";
-        return 1;
-    }
-
-    fileOutput << fixed << setprecision(2);
-
-    fileOutput << "count=" << stats.count
-               << " / missing=" << stats.missing
-               << " / ";
-
-    if (stats.count == 0) {
-        fileOutput << "min=N/A / max=N/A / mean=N/A";
-    } else {
-        fileOutput << "min=" << stats.min
-                   << " / max=" << stats.max
-                   << " / mean=" << stats.mean;
-    }
-
+    process("data.csv", "output.txt");
     return 0;
 }

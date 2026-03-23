@@ -1,0 +1,1 @@
+count=5/missing=1/min=-3.00/max=6.00/mean=2.20

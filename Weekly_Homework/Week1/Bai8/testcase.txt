@@ -1,0 +1,20 @@
+Test case 1: (Lọc trong khoảng thông thường)
++ config.txt: 10.0 20.0
+
++ data.csv:
+ID01, 15.5
+ID02, 10.0
+ID03, 20.0
+ID04, 5.0
+ID05, 25.0
+ID06, NA
+ID07, nan
+
+Test case 2: (Trường hợp biên - Giá trị đúng bằng ngưỡng)
++ config.txt: 10.0 10.0 (Chỉ lấy các giá trị đúng bằng 10) 
+
++ data.csv:
+ID01, 10.0
+ID02, 10.000001
+
+Test case 3: (Trống)

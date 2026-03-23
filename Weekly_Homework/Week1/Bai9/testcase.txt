@@ -1,0 +1,27 @@
+Testcase 1 (Normal test case):
++ fileA.csv:
+SV01, 9.5
+SV02, 8.0
+SV03, 7.5
+
++ fileB.csv:
+SV01, 9.0
+SV03, 8.0
+SV04, 6.0
+
+Testcase 2 (Không có ID chung):
++ fileA.csv: 
+A1, 10.0
+A2, 9.0
+
++ fileB.csv:
+B1, 8.5
+
+Test case 3: (Dữ liệu Missing - NA/NaN):
++ fileA.csv: 
+SV01, 10.0
+SV02, NA
+
++ fileB.csv:
+SV01, 8.0
+SV02, 7.5

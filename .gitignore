@@ -9,8 +9,6 @@
 *.exe
 *.out
 *.app
-*.txt
-*.csv
 
 # Loại bỏ các file object và thư viện tạm
 *.o
